@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(libprocmaps)
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    include(CTest)
-endif()
+option(PROCMAPS_BUILD_TESTS "Build tests for libprocmaps" OFF)
 
 add_library(procmaps STATIC src/parse_procmaps.c)
 
@@ -14,7 +12,7 @@ if (CMAKE_BUILD_TPYE MATCHES "Release")
     target_compile_options(procmaps PRIVATE -O2)
 endif()
 
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
+if(PROCMAPS_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
