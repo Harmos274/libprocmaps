@@ -33,7 +33,7 @@ static char make_perms(char const *perms)
     return perm;
 }
 
-static procmaps_row_t *parse_procmaps_line(char *line)
+procmaps_row_t *parse_procmaps_line(char *line)
 {
     procmaps_row_t *procmaps_row = malloc(sizeof(*procmaps_row));
 
@@ -46,7 +46,7 @@ static procmaps_row_t *parse_procmaps_line(char *line)
     procmaps_row->dev.major = atoi(strtok(NULL, ":"));
     procmaps_row->dev.minor = atoi(strtok(NULL, " "));
     procmaps_row->inode = atoi(strtok(NULL, " "));
-    procmaps_row->pathname = strdup(strtok(NULL, ""));
+    procmaps_row->pathname = strdup(strtok(NULL, " \n"));
     return procmaps_row;
 }
 
