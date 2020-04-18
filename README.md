@@ -45,7 +45,7 @@ int main(void)
 ```
 
 
-Refer to the [wiki](http://https://github.com/Harmos274/libprocmaps/wiki "wiki") for additional details.
+Refer to the [wiki](https://github.com/Harmos274/libprocmaps/wiki) for additional details.
 
 
 **Enjoy !**
