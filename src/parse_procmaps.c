@@ -12,7 +12,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char make_perms(char const *perms)
+void destroy_procmaps(hr_procmaps **procmaps)
+{
+    size_t i = 0;
+
+    while (procmaps[i]) {
+        free(procmaps[i]->pathname);
+        free(procmaps[i]);
+        ++i;
+    }
+    free(procmaps);
+}
+
+static unsigned char make_perms(char const *perms)
 {
     unsigned char perm = 0x00;
 
@@ -47,6 +59,10 @@ procmaps_row_t *parse_procmaps_line(char *line)
     procmaps_row->dev.minor = atoi(strtok(NULL, " "));
     procmaps_row->inode = atoi(strtok(NULL, " "));
     procmaps_row->pathname = strdup(strtok(NULL, " \n"));
+    if (procmaps_row->pathname == NULL) {
+        free(procmaps_row);
+        return NULL;
+    }
     return procmaps_row;
 }
 
@@ -58,21 +74,25 @@ static hr_procmaps **make_procmaps_array(FILE *procmaps_file)
     size_t size = 0;
     char *line = NULL;
 
+    if (procmaps_array == NULL)
+        return NULL;
     while (getline(&line, &size, procmaps_file) != -1) {
         if (line != NULL)
             procmaps_array[i] = parse_procmaps_line(line);
         ++i;
         if (i == array_size) {
-            procmaps_array = realloc(procmaps_array,
-                (array_size + 16) * sizeof(*procmaps_array));
-            memset(procmaps_array + array_size, 0,
-                16 * sizeof(*procmaps_array));
+            procmaps_array = realloc(procmaps_array, (array_size + 16) * sizeof(*procmaps_array));
+            if (procmaps_array == NULL) {
+                destroy_procmaps(procmaps_array);
+                return NULL;
+            }
+            memset(procmaps_array + array_size, 0, 16 * sizeof(*procmaps_array));
             array_size += 16;
         }
-        free(line);
-        line = NULL;
+        free(line), line = NULL;
     }
-    return (free(line), procmaps_array);
+    free(line);
+    return procmaps_array;
 }
 
 hr_procmaps **contruct_procmaps(int pid)
@@ -82,7 +102,7 @@ hr_procmaps **contruct_procmaps(int pid)
     hr_procmaps **procmaps_array = NULL;
 
     if (pid <= 0) {
-        sprintf(path, "/proc/self/maps");
+        strcpy(path, "/proc/self/maps");
     } else {
         sprintf(path, "/proc/%d/maps", pid);
     }
@@ -94,18 +114,4 @@ hr_procmaps **contruct_procmaps(int pid)
     procmaps_array = make_procmaps_array(procmaps_file);
     fclose(procmaps_file);
     return procmaps_array;
-}
-
-void destroy_procmaps(hr_procmaps **procmaps)
-{
-    int i = 0;
-
-    while (procmaps[i++] != NULL);
-    i -= 2;
-    while (i != -1) {
-        free(procmaps[i]->pathname);
-        free(procmaps[i]);
-        --i;
-    }
-    free(procmaps);
 }
