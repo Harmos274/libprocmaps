@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(libprocmaps)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    include(CTest)
+endif()
 
 add_library(procmaps STATIC src/parse_procmaps.c)
 
@@ -9,6 +12,10 @@ target_compile_options(procmaps PRIVATE -W -Wall -Wextra)
 
 if (CMAKE_BUILD_TPYE MATCHES "Release")
     target_compile_options(procmaps PRIVATE -O2)
+endif()
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
+    add_subdirectory(tests)
 endif()
 
 install(TARGETS procmaps DESTINATION lib)
