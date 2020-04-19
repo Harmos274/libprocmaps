@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 void destroy_procmaps(hr_procmaps **procmaps)
 {
@@ -92,6 +93,10 @@ static hr_procmaps **make_procmaps_array(FILE *procmaps_file)
         free(line), line = NULL;
     }
     free(line);
+    if (errno == EINVAL || errno == ENOMEM) {
+        destroy_procmaps(procmaps_array);
+        return NULL;
+    }
     return procmaps_array;
 }
 
@@ -99,6 +104,7 @@ hr_procmaps **contruct_procmaps(int pid)
 {
     char path[100];
     FILE *procmaps_file = NULL;
+    int errno_saver = 0;
     hr_procmaps **procmaps_array = NULL;
 
     if (pid <= 0) {
@@ -112,6 +118,8 @@ hr_procmaps **contruct_procmaps(int pid)
         return NULL;
     }
     procmaps_array = make_procmaps_array(procmaps_file);
-    fclose(procmaps_file);
+    errno_saver = errno;
+    if (fclose(procmaps_file) != -1)
+        errno = errno_saver;
     return procmaps_array;
 }
