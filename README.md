@@ -36,7 +36,7 @@ Destroy the `hr_procmaps` object freeing the allocated memory.
 
 int main(void)
 {
-	hr_procmaps procmaps = construct_procmaps(0);
+	hr_procmaps **procmaps = construct_procmaps(0);
 	
 	printf("0x%0llx", procmaps[0]->addr_begin);
 	destroy_procmaps(procmaps);
