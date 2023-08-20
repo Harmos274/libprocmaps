@@ -58,7 +58,7 @@ typedef procmaps_row_t hr_procmaps;
  *
  * @return Array of filled procmaps_row_t *
  */
-hr_procmaps **contruct_procmaps(int pid);
+hr_procmaps **construct_procmaps(int pid);
 
 /**
  * @brief Destroy hr_procmaps object, free all the allocated memory

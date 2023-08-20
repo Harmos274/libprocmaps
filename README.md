@@ -19,7 +19,7 @@ $> sudo make install
 ## Documentation
 
 ```C
-hr_procmaps **contruct_procmaps(int pid);
+hr_procmaps **construct_procmaps(int pid);
 ```
 Parse `/proc/<PID>/maps` to create an object `hr_procmaps` containing information on the maps of the process **PID**.
 The `pid` argument is the **PID** of the process to get the maps of. If it is set to 0 or a negative value, the function will parse `/proc/self/maps` instead, fetching information about itself.
