@@ -106,7 +106,7 @@ static hr_procmaps **make_procmaps_array(FILE *procmaps_file)
     return procmaps_array;
 }
 
-hr_procmaps **contruct_procmaps(int pid)
+hr_procmaps **construct_procmaps(int pid)
 {
     char path[100];
     FILE *procmaps_file = NULL;
